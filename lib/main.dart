@@ -35,29 +35,43 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    TextEditingController _controller = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: Text("Bloc Pattern"),
       ),
-      body: BlocBuilder<TodoCubit, TodoInitial>(
-        builder: (context, state) {
-          return ListView.builder(
-            itemCount: state.todos.length,
-            itemBuilder: (context, index) {
-              return Card(
-                elevation: 3,
-                child: ListTile(
-                  title: Text(state.todos[index]),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () =>
-                        BlocProvider.of<TodoCubit>(context).deleteTodo(index),
-                  ),
-                ),
-              );
-            },
-          );
-        },
+      body: Column(
+        children: [
+          TextField(
+            controller: _controller,
+          ),
+          ElevatedButton(
+              onPressed: () => BlocProvider.of<TodoCubit>(context)
+                  .addNewTodo(_controller.text),
+              child: Text("Add Todo")),
+          Expanded(
+            child: BlocBuilder<TodoCubit, TodoInitial>(
+              builder: (context, state) {
+                return ListView.builder(
+                  itemCount: state.todos.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      elevation: 3,
+                      child: ListTile(
+                        title: Text(state.todos[index]),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () => BlocProvider.of<TodoCubit>(context)
+                              .deleteTodo(index),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
